@@ -14,25 +14,27 @@ class AppUser{
     var intro: String?
     var pfpURL: String? //profile picture
     var coverURL: String? //cover picture
-    var userid: String
     var documentID:String
     
-    init(displayName:String,intro:String,pfpURL: String,coverURL: String,userid:String, documentID:String){
+    init(displayName:String,intro:String,pfpURL: String,coverURL: String, documentID:String){
         self.displayName=displayName
         self.intro=intro
         self.pfpURL=pfpURL
         self.coverURL=coverURL
-        self.userid=userid
+        
         self.documentID = documentID
     }
     
     var dictionary: [String:Any]{
-        return ["displayName":displayName,"intro":intro, "pfpURL":pfpURL, "coverURL":coverURL,"userid":userid]
+        return ["displayName":displayName,"intro":intro, "pfpURL":pfpURL, "coverURL":coverURL]
     }
 
     
     convenience init(user:User){
-        self.init(displayName:"",intro:"",pfpURL:"", coverURL:"",userid:"",documentID:user.uid)
+        self.init(displayName:"",intro:"",pfpURL:"", coverURL:"",documentID:user.uid)
+    }
+    convenience init(userid:String){
+        self.init(displayName:"",intro:"",pfpURL:"", coverURL:"",documentID:userid)
     }
     
     convenience init(dictionary: [String:Any]){
@@ -40,8 +42,7 @@ class AppUser{
         let intro=dictionary["intro"] as! String? ?? ""
         let pfpURL=dictionary["pfpURL"] as! String? ?? ""
         let coverURL=dictionary["coverURL"] as! String? ?? ""
-        let userid=dictionary["userid"] as! String? ?? ""
-        self.init(displayName:displayName,intro:intro,pfpURL:pfpURL, coverURL:coverURL,userid:userid, documentID:"")
+        self.init(displayName:displayName,intro:intro,pfpURL:pfpURL, coverURL:coverURL, documentID:"")
         
     }
     
@@ -72,13 +73,7 @@ class AppUser{
     func saveData(completion:@escaping (Bool)->()){
         let db = Firestore.firestore()
         
-        //grab user id
-        guard let userid=Auth.auth().currentUser?.uid else{
-            print("ERROR: Could not save data because we don't have a valid postingUserID")
-            return completion(false)
-        }
-        self.userid=userid
-        //create the dictionary
+        
         let dataToSave: [String:Any]=self.dictionary
         
         if self.documentID==""{
@@ -107,27 +102,34 @@ class AppUser{
         }
     }
     
-    func loadData(id: String) {
+    func loadData(id: String,completed: @escaping()->()){
         let db=Firestore.firestore()
         
         let ref=db.collection("users").document(id)
-
+        
         ref.getDocument { (document, error) in
             if let error = error {
                 print("ERROR: \(error.localizedDescription)")
+                return completed()
             }
             
             if let document=document, document.exists{
-                
                 let appUser=AppUser(dictionary: document.data()!)
-                appUser.documentID=document.documentID
+                self.displayName=appUser.displayName
+                self.coverURL=appUser.coverURL
+                self.pfpURL=appUser.pfpURL
+                self.intro=appUser.intro
+                print("dp",self.displayName)
+                
             }else{
                 print("document DNE")
             }
             
-            //completion(true)
-            
+            completed()
         }
+        
+       
+        
     }
 }
 

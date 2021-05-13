@@ -8,7 +8,7 @@
 import Foundation
 import Firebase
 
-class Reviews {
+class Comments {
     var commentArray:[Comment]=[]
     var db:Firestore!
     
@@ -26,7 +26,7 @@ class Reviews {
                 print("ERROR: adding the snapshot listener \(error!.localizedDescription)")
                 return completed()
             }
-            self.postArray=[]
+            self.commentArray=[]
             for document in querySnapshot!.documents{
                 let comment=Comment(dictionary: document.data() )
                 comment.documentID=document.documentID

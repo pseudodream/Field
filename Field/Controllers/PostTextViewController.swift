@@ -6,38 +6,62 @@
 //
 
 import UIKit
+import Firebase
 
 class PostTextViewController: UIViewController {
     
     @IBOutlet weak var bodyTextView: UITextView!
     @IBOutlet weak var titleTextField: UITextField!
-    @IBOutlet weak var hashtagTextView: UITextField!
+    @IBOutlet weak var hashtagTextField: UITextField!
     
     var post: Post!
+    let userid=Auth.auth().currentUser?.uid ?? ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        let tap = UITapGestureRecognizer(target: self.view, action: #selector(UIView.endEditing(_:)))
+        tap.cancelsTouchesInView = false
+        self.view.addGestureRecognizer(tap)
+        
+        if post == nil{
+            post=Post()
+            print(post.date)
+        }
+        
     }
     
+    func leaveViewController(){
+        let isPresentingInAddMode=presentingViewController is UINavigationController
+        if isPresentingInAddMode{
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
 
+            let nextViewController = storyBoard.instantiateViewController(withIdentifier: "home") as! HomePageViewController
+            print("leaving")
+            self.navigationController?.pushViewController(nextViewController, animated: true)
+            
+        }else{
+            navigationController?.popViewController(animated: true)
+        }
+        
+    }
    
     @IBAction func postButtonPressed(_ sender: UIBarButtonItem) {
+        post.title=titleTextField.text!
+        post.body=bodyTextView.text!
+        post.hashtag=hashtagTextField.text!
+        post.postUserID=userid
+        post.saveData { (success) in
+            print("saved ")
+            self.leaveViewController()
+        }
+        
+        
     }
     
     @IBAction func cancelButtonPressed(_ sender: UIBarButtonItem) {
+        leaveViewController()
     }
     
   
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
 
 }

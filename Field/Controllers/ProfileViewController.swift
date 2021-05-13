@@ -20,16 +20,19 @@ class ProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         updateUserFromCloud()
+        print("nn",appUser.displayName)
         
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        appUser.loadData(id: userid)
         updateUserFromCloud()
     }
     
     func updateUserFromCloud(){
-        appUser.loadData(id: userid)
+        appUser.loadData(id: userid){
+            
+        }
+        print(appUser.displayName)
         userName.text=appUser.displayName
         intro.text=appUser.intro!
         

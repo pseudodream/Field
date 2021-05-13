@@ -8,6 +8,8 @@
 import Foundation
 import Firebase
 
+
+
 class Posts{
     var postArray: [Post]=[]
     var db: Firestore!

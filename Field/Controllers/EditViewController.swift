@@ -36,7 +36,9 @@ class EditViewController: UIViewController {
     }
     
     func updateUserFromCloud(){
-        appUser.loadData(id: userid)
+        appUser.loadData(id: userid){
+            
+        }
         nameTextField.text=appUser.displayName
         introTextField.text=appUser.intro!
         
@@ -56,12 +58,6 @@ class EditViewController: UIViewController {
         
     }
     
-   
-//    override func unwind(for unwindSegue: UIStoryboardSegue, towards subsequentVC: UIViewController) {
-//        let source = unwindSegue.source as! ProfileViewController
-//        source.appUser=self.appUser
-//    }
-//
     
     func cameraOrLibraryAlert(){
         let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)

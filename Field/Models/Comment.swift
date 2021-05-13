@@ -44,7 +44,7 @@ class Comment {
         
         if self.documentID==""{
             var ref:DocumentReference?=nil //create new id
-            ref=db.collection("posts").document(post.documentID).collection("commentss").addDocument(data: dataToSave){
+            ref=db.collection("posts").document(post.documentID).collection("comments").addDocument(data: dataToSave){
                 (error) in
                 guard error==nil else{
                     print("ERROR: adding document \(error!.localizedDescription)")
@@ -52,12 +52,12 @@ class Comment {
                 }
                 self.documentID=ref!.documentID
                 print("Added document: \(self.documentID) to post \(post.documentID )")
-                
+                completion(true)
             }
             
             
         }else { //save to existing documentid
-            let ref=db.collection("posts").document(post.documentID).collection("commentss").document(self.documentID)
+            let ref=db.collection("posts").document(post.documentID).collection("comments").document(self.documentID)
             ref.setData(dataToSave){(error) in
                 guard error==nil else{
                     print("ERROR: updating document \(error!.localizedDescription)")
@@ -65,13 +65,14 @@ class Comment {
                 }
                 print("Updated document: \(self.documentID)to post \(post.documentID )")
                 
+                completion(true)
             }
         }
     }
     
     func deleteData(post: Post, completion:@escaping (Bool)->()){
         let db=Firestore.firestore()
-        db.collection("posts").document(post.documentID).collection("commentss").document(documentID).delete { (error) in
+        db.collection("posts").document(post.documentID).collection("comments").document(documentID).delete { (error) in
             if let error=error{
                 print("ERROR:deleting review documentID \(self.documentID).ERROR:\(error.localizedDescription)")
                 completion(false)
