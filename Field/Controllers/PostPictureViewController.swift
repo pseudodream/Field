@@ -41,8 +41,8 @@ class PostPictureViewController: UIViewController {
         if isPresentingInAddMode{
             let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
             let nextViewController = storyBoard.instantiateViewController(withIdentifier: "home") as! HomePageViewController
-            
             self.navigationController?.pushViewController(nextViewController, animated: true)
+            
         }else{
             navigationController?.popViewController(animated: true)
         }

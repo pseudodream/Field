@@ -27,7 +27,11 @@ class DetailViewController: UIViewController {
     
     @IBOutlet weak var imageDescriptionTextView: UITextView!
     @IBOutlet weak var hashtagLabel: UILabel!
+    @IBOutlet weak var likesCountLabel: UILabel!
     
+    @IBOutlet weak var followButton: UIButton!
+    @IBOutlet weak var deleteButton: UIButton!
+    @IBOutlet weak var commentCountLabel: UILabel!
     @IBOutlet weak var tableView: UITableView!
     var post: Post!
     var comments: Comments!
@@ -42,20 +46,50 @@ class DetailViewController: UIViewController {
         
         tableView.delegate=self
         tableView.dataSource=self
+        
         updateUI()
         
 
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        updateUI()
         comments.loadData(post: post) {
             self.tableView.reloadData()
+            self.updateUI()
         }
     }
     
     func updateUI(){
+        if post.postUserID != Auth.auth().currentUser?.uid{
+            deleteButton.isHidden=true
+            
+            
+        }
+        followButton.isHidden=true
+        var postUser=AppUser(userid: post.postUserID )
+        postUser.loadData(id: post.postUserID) {
+            self.userName.text=postUser.displayName
+        }
+        
+        let db=Firestore.firestore()
+        var userPhoto=UserPhoto()
+        db.collection("users").document(postUser.documentID).collection("profilePicture").getDocuments { (querySnapshot, error) in
+            guard error == nil else {
+                print("ERROR: adding the snapshot listener \(error!.localizedDescription)")
+               return
+            }
+            for document in querySnapshot!.documents{
+                userPhoto.documentID=document.documentID
+                userPhoto.loadImage(appUser:postUser){(success) in
+                    self.profilePic.image=userPhoto.image
+                    
+                }
+            }
+        }
+       
         dateLabel.text="Posted on:\(dateFormatter.string(from: post.date))"
+        likesCountLabel.text="\(post.numberOfLikes)"
+        commentCountLabel.text="Comments (\(comments.commentArray.count))"
         titleLabel.text=post.title
         hashtagLabel.text=post.hashtag
         if post.hasImage{
@@ -82,6 +116,12 @@ class DetailViewController: UIViewController {
         }
         
     }
+    @IBAction func likePressed(_ sender: Any) {
+        post.numberOfLikes+=1
+        post.saveData{(success) in
+            self.updateUI()
+        }
+    }
     
     
     @IBAction func CommentPressed(_ sender: UIButton) {
@@ -92,13 +132,37 @@ class DetailViewController: UIViewController {
         popOverViewController.view.frame=self.view.frame
         self.view.addSubview(popOverViewController.view)
         popOverViewController.didMove(toParent: self)
-        
     }
     
     @IBAction func followPressed(_ sender: UIButton) {
+        var following=Following()
+        following.id=post.postUserID
+        if followButton.titleLabel?.text=="Follow"{
+           
+            following.saveData(appUser: appUser) { (success) in
+                self.followButton.setTitle("Following", for: .normal)
+                return
+            }
+        }else{
+            following.deleteData(appUser: appUser) { (success) in
+                self.followButton.setTitle("Follow", for: .normal)
+                return
+            }
+            
+        }
     }
+   
+    @IBAction func deleteButton(_ sender: UIButton) {
+        post.deleteData{(success) in
+            self.dismiss(animated: true, completion: nil)
+        }
+        let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+        let nextViewController = storyBoard.instantiateViewController(withIdentifier: "home") as! HomePageViewController
+        
+        self.navigationController?.pushViewController(nextViewController, animated: true)
+        
     
-    
+    }
 }
 
 extension DetailViewController: UITableViewDelegate,UITableViewDataSource{

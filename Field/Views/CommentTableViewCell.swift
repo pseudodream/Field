@@ -20,7 +20,7 @@ class CommentTableViewCell: UITableViewCell {
                 self.name.text=appUser.displayName
             }
             
-            print("self.name.text",self.name.text,"lb",appUser)
+            
                 
         }
     }

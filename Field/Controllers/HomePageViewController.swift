@@ -7,7 +7,7 @@
 
 import UIKit
 import Firebase
-
+import SDWebImage
 
 class HomePageViewController: UIViewController {
     var appUser: AppUser!
@@ -28,6 +28,8 @@ class HomePageViewController: UIViewController {
             appUser.saveIfNewUser { (success) in
                 print("new user added")
             }
+            appUser.loadData(id: userid){
+            }
         }
         
     }
@@ -35,13 +37,12 @@ class HomePageViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         appUser.loadData(id: userid){
-           
         }
-        print("intro",self.appUser.intro)
        
         posts.loadData{
             self.tableView.reloadData()
         }
+        
         navigationController?.setToolbarHidden(false, animated: false)
     }
     
@@ -54,6 +55,8 @@ class HomePageViewController: UIViewController {
             let destination=segue.destination as! DetailViewController
             let selectedIndexPath=tableView.indexPathForSelectedRow!
             destination.post=posts.postArray[selectedIndexPath.row]
+          
+            
         }
         
     }
@@ -64,6 +67,15 @@ class HomePageViewController: UIViewController {
         arg.sizeToFit()
         arg.isScrollEnabled = false
     }
+//    func sortBasedOnSegmentPressed(){
+//        switch sortSegmentedControl.selectedSegmentIndex{
+//        case 0:posts.postArray.sort(by: {$0.numberOfLikes<$1.numberOfLikes})
+//        case 1:print("default setting, no need to sort ")
+//        default:
+//            print("check segment control for error")
+//        }
+//        tableView.reloadData()
+//    }
     
     @IBAction func showPopUp(_ sender: UIBarButtonItem) {
         let popOverViewController=UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "PopUpID") as! AddPopUpViewController
@@ -83,14 +95,14 @@ extension HomePageViewController: UITableViewDelegate,UITableViewDataSource{
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! PostTableViewCell
-    
+       
         cell.post=posts.postArray[indexPath.row]
         return cell
         
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 500
+        return 395
     }
     
     

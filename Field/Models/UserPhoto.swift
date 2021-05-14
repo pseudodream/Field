@@ -5,7 +5,7 @@
 //  Created by amyz on 5/13/21.
 //
 
-import Foundation
+
 import UIKit
 import Firebase
 
@@ -77,13 +77,13 @@ class UserPhoto{
                 self.photoURL = "\(url)"
                 
                 let dataToSave = self.dictionary
-                let ref = db.collection("spots").document(appUser.documentID).collection("photos").document(self.documentID)
+                let ref = db.collection("users").document(appUser.documentID).collection("profilePicture").document(self.documentID)
                 ref.setData(dataToSave) { (error) in
                     guard error == nil else {
                         print("ERROR: updating document \(error!.localizedDescription)")
                         return completion(false)
                     }
-                    print("Updated document: \(self.documentID) in spot: \(appUser.documentID)")
+                    print("Updated document: \(self.documentID) in user: \(appUser.documentID)")
                     completion(true)
                 }
             }
@@ -104,6 +104,9 @@ class UserPhoto{
             print("ERROR: did not pass a valid spot into loadImage")
             return
         }
+        
+        let db=Firestore.firestore()
+        //let ref=db.collection("users").document(appUser.documentID).collection("profilePicture").document(self.documentID)
         
         let storage = Storage.storage()
         let storageRef = storage.reference().child(appUser.documentID).child(documentID)

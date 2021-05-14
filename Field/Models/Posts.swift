@@ -34,4 +34,23 @@ class Posts{
             completed()
         }
     }
+    
+    func loadUserData(appUser:AppUser,completed: @escaping()->()){
+        db.collection("posts").addSnapshotListener { (querySnapshot, error) in
+            guard error == nil else{
+                print("ERROR: adding the snapshot listener \(error!.localizedDescription)")
+                return completed()
+            }
+            self.postArray=[]
+            for document in querySnapshot!.documents{
+                let post=Post(dictionary: document.data())
+                if post.postUserID==appUser.documentID{
+                    post.documentID=document.documentID
+                    self.postArray.append(post)
+                }
+                
+            }
+            completed()
+        }
+    }
 }

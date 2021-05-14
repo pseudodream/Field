@@ -21,7 +21,7 @@ class Post{
     
     var dictionary: [String: Any] {
         let timeIntervalDate = date.timeIntervalSince1970
-        return ["title": title, "body": body, "hasImage": hasImage, "hashtag": hashtag, "postuserID": postUserID, "date": timeIntervalDate,"numberOfLikes":numberOfLikes]
+        return ["title": title, "body": body, "hasImage": hasImage, "hashtag": hashtag, "postUserID": postUserID, "date": timeIntervalDate,"numberOfLikes":numberOfLikes]
     }
   
     init(title: String, body: String, hasImage: Bool,hashtag: String, postUserID: String, date: Date,numberOfLikes:Int, documentID: String) {
@@ -38,7 +38,7 @@ class Post{
     
     convenience init() {
             let postUserID = Auth.auth().currentUser?.uid ?? ""
-        self.init(title: "", body: "", hasImage: false,hashtag: "", postUserID: postUserID, date: Date(),numberOfLikes:0, documentID:"")
+            self.init(title: "", body: "", hasImage: false,hashtag: "", postUserID: postUserID, date: Date(),numberOfLikes:0, documentID:"")
     }
     
     convenience init(dictionary: [String: Any]) {
@@ -90,7 +90,11 @@ class Post{
         
     }
     
-    func deleteData(spot: Post, completion:@escaping (Bool)->()){
+       
+    
+    
+    
+    func deleteData(completion:@escaping (Bool)->()){
         let db=Firestore.firestore()
         db.collection("posts").document(documentID).delete { (error) in
             if let error=error{
@@ -98,76 +102,9 @@ class Post{
                 completion(false)
             }else{
                 print("successfully deleted document \(self.documentID)")
+                completion(true)
             }
         }
     }
-    
-//    func saveImageData(spot: Spot, completion: @escaping (Bool) -> () ){
-//        let db=Firestore.firestore()
-//        let storage=Storage.storage()
-//
-//        //convert photo.image to jpeg
-//        guard let photoData=self.image.jpegData(compressionQuality: 0.5) else {
-//            print("ERROR:couldn't convert photo.image to data")
-//            return
-//        }
-//
-//        let  uploadMetaData = StorageMetadata()
-//        uploadMetaData.contentType="image/jpeg"
-//
-//        //create filename
-//        if documentID == ""{
-//            documentID=UUID().uuidString
-//
-//        }
-//
-//        let storageRef=storage.reference().child(spot.documentID).child(documentID)
-//
-//        let uploadTask=storageRef.putData(photoData, metadata: uploadMetaData) { (metadata, error) in
-//            if let error = error{
-//                print("ERROR:upload your ref \(uploadMetaData) failed. \(error.localizedDescription)")
-//            }
-//
-//            completion(true)
-//        }
-//
-//        uploadTask.observe(.success) { (snapshot) in
-//            print("upload to Firebase storage successful")
-//            storageRef.downloadURL { (url, error) in
-//                guard error == nil else {
-//                    print("ERROR: couldn't create a download url \(error!.localizedDescription)")
-//                    return completion(false)
-//                }
-//
-//                guard let url = url else{
-//                    print("ERROR: url is nil \(error!.localizedDescription)")
-//                    return completion(false)
-//                }
-//                self.photoURL = "\(url)"
-//
-//                let dataToSave = self.dictionary
-//                let ref = db.collection("spots").document(spot.documentID).collection("photos").document(self.documentID)
-//                ref.setData(dataToSave) { (error) in
-//                    guard error == nil else {
-//                        print("ERROR: updating document \(error!.localizedDescription)")
-//                        return completion(false)
-//                    }
-//                    print("Updated document: \(self.documentID) in spot: \(spot.documentID)")
-//                    completion(true)
-//                }
-//            }
-//
-//
-//        }
-//
-//        uploadTask.observe(.failure) { (snapshot) in
-//            if let error = snapshot.error {
-//                print("ERROR:upload task for file \(self.documentID) failed, in spot \(spot.documentID), with error  \(error.localizedDescription)")
-//            }
-//
-//            completion(false)
-//        }
-//
-   // }
     
 }

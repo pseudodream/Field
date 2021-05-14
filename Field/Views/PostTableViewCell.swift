@@ -27,10 +27,32 @@ class PostTableViewCell: UITableViewCell {
     
     var post:Post! {
         didSet{
+            let id=post.postUserID
+            var appUser=AppUser(userid:id)
+            appUser.loadData(id: id){
+                self.userNameLabel.text=appUser.displayName
+            }
+            
+            let db=Firestore.firestore()
+            var userPhoto=UserPhoto()
+            db.collection("users").document(appUser.documentID).collection("profilePicture").getDocuments { (querySnapshot, error) in
+                guard error == nil else {
+                    print("ERROR: adding the snapshot listener \(error!.localizedDescription)")
+                   return
+                }
+                for document in querySnapshot!.documents{
+                    userPhoto.documentID=document.documentID
+                    userPhoto.loadImage(appUser:appUser){(success) in
+                        
+                        self.pfpImage.image=userPhoto.image
+                        
+                    }
+                }
+            }
+            
             titleLabel.text=post.title
             if post.hasImage == true{
                 textPosted.isHidden=true
-                let db=Firestore.firestore()
                 var postPhoto=PostPhoto()
                 db.collection("posts").document(post.documentID).collection("photos").getDocuments { (querySnapshot, error) in
                     guard error == nil else {
@@ -42,7 +64,7 @@ class PostTableViewCell: UITableViewCell {
                         postPhoto.loadImage(post: self.post){(success) in
                             
                             self.imagePosted.image=postPhoto.image
-                            //print("aaaaa",postPhoto.documentID,self.imagePosted.image)
+                            
                         }
                     }
                 }
@@ -57,11 +79,7 @@ class PostTableViewCell: UITableViewCell {
         }
     }
     
-    var user: AppUser! {
-        didSet{
-            
-        }
-    }
+    
     
     @IBAction func likeButtonPressed(_ sender: UIButton) {
     }

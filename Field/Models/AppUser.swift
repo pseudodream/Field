@@ -11,38 +11,32 @@ import Firebase
 
 class AppUser{
     var displayName: String
-    var intro: String?
-    var pfpURL: String? //profile picture
-    var coverURL: String? //cover picture
+    var intro: String
     var documentID:String
     
-    init(displayName:String,intro:String,pfpURL: String,coverURL: String, documentID:String){
+    init(displayName:String,intro:String, documentID:String){
         self.displayName=displayName
         self.intro=intro
-        self.pfpURL=pfpURL
-        self.coverURL=coverURL
-        
         self.documentID = documentID
     }
     
     var dictionary: [String:Any]{
-        return ["displayName":displayName,"intro":intro, "pfpURL":pfpURL, "coverURL":coverURL]
+        return ["displayName":displayName,"intro":intro]
     }
 
     
     convenience init(user:User){
-        self.init(displayName:"",intro:"",pfpURL:"", coverURL:"",documentID:user.uid)
+        self.init(displayName:"",intro:"",documentID:user.uid)
     }
     convenience init(userid:String){
-        self.init(displayName:"",intro:"",pfpURL:"", coverURL:"",documentID:userid)
+        self.init(displayName:"",intro:"", documentID:userid)
     }
     
     convenience init(dictionary: [String:Any]){
         let displayName=dictionary["displayName"] as! String? ?? ""
         let intro=dictionary["intro"] as! String? ?? ""
-        let pfpURL=dictionary["pfpURL"] as! String? ?? ""
-        let coverURL=dictionary["coverURL"] as! String? ?? ""
-        self.init(displayName:displayName,intro:intro,pfpURL:pfpURL, coverURL:coverURL, documentID:"")
+        
+        self.init(displayName:displayName,intro:intro, documentID:"")
         
     }
     
@@ -116,10 +110,8 @@ class AppUser{
             if let document=document, document.exists{
                 let appUser=AppUser(dictionary: document.data()!)
                 self.displayName=appUser.displayName
-                self.coverURL=appUser.coverURL
-                self.pfpURL=appUser.pfpURL
+                
                 self.intro=appUser.intro
-                print("dp",self.displayName)
                 
             }else{
                 print("document DNE")
@@ -128,9 +120,8 @@ class AppUser{
             completed()
         }
         
-       
-        
     }
+    
 }
 
 

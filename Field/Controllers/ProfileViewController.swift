@@ -34,7 +34,7 @@ class ProfileViewController: UIViewController {
         }
         print(appUser.displayName)
         userName.text=appUser.displayName
-        intro.text=appUser.intro!
+        intro.text=appUser.intro
         
     }
     
