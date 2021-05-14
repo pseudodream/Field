@@ -1,8 +1,8 @@
 //
-//  PostTableViewCell.swift
+//  ProfilePostTableViewCell.swift
 //  Field
 //
-//  Created by amyz on 5/13/21.
+//  Created by amyz on 5/14/21.
 //
 
 import UIKit
@@ -14,8 +14,7 @@ private let dateFormatter: DateFormatter = {
     return dateFormatter
 }()
 
-class PostTableViewCell: UITableViewCell {
-
+class ProfilePostTableViewCell: UITableViewCell {
     @IBOutlet weak var pfpImage: UIImageView!
     @IBOutlet weak var likeCountLabel: UILabel!
     @IBOutlet weak var dateLabel: UILabel!
@@ -25,7 +24,7 @@ class PostTableViewCell: UITableViewCell {
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var hashtagLabel: UILabel!
     
-    var post:Post! {
+    var post: Post!{
         didSet{
             likeCountLabel.text="\(post.numberOfLikes)"
             let id=post.postUserID
@@ -46,7 +45,6 @@ class PostTableViewCell: UITableViewCell {
                     userPhoto.loadImage(appUser:appUser){(success) in
                         self.pfpImage.layer.cornerRadius=self.pfpImage.frame.size.width/2
                         self.pfpImage.clipsToBounds=true
-                      
                         self.pfpImage.image=userPhoto.image
                         
                     }
@@ -81,14 +79,5 @@ class PostTableViewCell: UITableViewCell {
             dateLabel.text="Posted on: \(dateFormatter.string(from: post.date))"
         }
     }
-    
-    
-    
-    @IBAction func likeButtonPressed(_ sender: UIButton) {
-    }
-    
    
-    
-    
-
 }

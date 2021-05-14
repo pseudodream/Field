@@ -14,10 +14,6 @@ class AddPopUpViewController: UIViewController {
         self.view.backgroundColor=UIColor.black.withAlphaComponent(0.3)
     }
     
-    func showAnimate(){
-        
-        
-    }
 
     @IBAction func closePopUp(_ sender: UIButton) {
         self.view.removeFromSuperview()

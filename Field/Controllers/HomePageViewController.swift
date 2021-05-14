@@ -29,6 +29,7 @@ class HomePageViewController: UIViewController {
                 print("new user added")
             }
             appUser.loadData(id: userid){
+                print("user loaded")
             }
         }
         
@@ -61,24 +62,10 @@ class HomePageViewController: UIViewController {
         
     }
     
-    func adjustUITextViewHeight(arg : UITextView)
-    {
-        arg.translatesAutoresizingMaskIntoConstraints = true
-        arg.sizeToFit()
-        arg.isScrollEnabled = false
-    }
-//    func sortBasedOnSegmentPressed(){
-//        switch sortSegmentedControl.selectedSegmentIndex{
-//        case 0:posts.postArray.sort(by: {$0.numberOfLikes<$1.numberOfLikes})
-//        case 1:print("default setting, no need to sort ")
-//        default:
-//            print("check segment control for error")
-//        }
-//        tableView.reloadData()
-//    }
     
     @IBAction func showPopUp(_ sender: UIBarButtonItem) {
         let popOverViewController=UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "PopUpID") as! AddPopUpViewController
+       
         self.addChild(popOverViewController)
         popOverViewController.view.frame=self.view.frame
         self.view.addSubview(popOverViewController.view)

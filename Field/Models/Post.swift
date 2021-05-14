@@ -61,7 +61,7 @@ class Post{
         
         //create the dictionary
         let dataToSave: [String:Any]=self.dictionary
-        print("dt",dataToSave)
+       
         if self.documentID==""{
             var ref:DocumentReference?=nil //create new id
             ref=db.collection("posts").addDocument(data: dataToSave){

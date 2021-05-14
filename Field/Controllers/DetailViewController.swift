@@ -29,7 +29,7 @@ class DetailViewController: UIViewController {
     @IBOutlet weak var hashtagLabel: UILabel!
     @IBOutlet weak var likesCountLabel: UILabel!
     
-    @IBOutlet weak var followButton: UIButton!
+    
     @IBOutlet weak var deleteButton: UIButton!
     @IBOutlet weak var commentCountLabel: UILabel!
     @IBOutlet weak var tableView: UITableView!
@@ -65,7 +65,7 @@ class DetailViewController: UIViewController {
             
             
         }
-        followButton.isHidden=true
+        
         var postUser=AppUser(userid: post.postUserID )
         postUser.loadData(id: post.postUserID) {
             self.userName.text=postUser.displayName
@@ -81,6 +81,8 @@ class DetailViewController: UIViewController {
             for document in querySnapshot!.documents{
                 userPhoto.documentID=document.documentID
                 userPhoto.loadImage(appUser:postUser){(success) in
+                    self.profilePic.layer.cornerRadius=self.profilePic.frame.size.width/2
+                    self.profilePic.clipsToBounds=true
                     self.profilePic.image=userPhoto.image
                     
                 }
@@ -134,27 +136,11 @@ class DetailViewController: UIViewController {
         popOverViewController.didMove(toParent: self)
     }
     
-    @IBAction func followPressed(_ sender: UIButton) {
-        var following=Following()
-        following.id=post.postUserID
-        if followButton.titleLabel?.text=="Follow"{
-           
-            following.saveData(appUser: appUser) { (success) in
-                self.followButton.setTitle("Following", for: .normal)
-                return
-            }
-        }else{
-            following.deleteData(appUser: appUser) { (success) in
-                self.followButton.setTitle("Follow", for: .normal)
-                return
-            }
-            
-        }
-    }
+   
    
     @IBAction func deleteButton(_ sender: UIButton) {
         post.deleteData{(success) in
-            self.dismiss(animated: true, completion: nil)
+            //self.dismiss(animated: true, completion: nil)
         }
         let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
         let nextViewController = storyBoard.instantiateViewController(withIdentifier: "home") as! HomePageViewController

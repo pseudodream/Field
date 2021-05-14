@@ -55,11 +55,12 @@ class EditViewController: UIViewController {
                 print(document.documentID)
                 userPhoto.loadImage(appUser:self.appUser){(success) in
                     self.pfpImage.image=userPhoto.image
-                    print(userPhoto.photoURL)
+                    self.pfpImage.layer.cornerRadius=self.pfpImage.frame.size.width/2
+                    self.pfpImage.clipsToBounds=true
                     guard let url = URL(string: userPhoto.photoURL) else {
                         return
                     }
-                    print("ddd\(url)")
+                    
                     self.pfpImage.sd_imageTransition = .fade
                     self.pfpImage.sd_imageTransition?.duration = 0.5
                     self.pfpImage.sd_setImage(with: url)
