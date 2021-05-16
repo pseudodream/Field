@@ -91,9 +91,6 @@ class Post{
     }
     
        
-    
-    
-    
     func deleteData(completion:@escaping (Bool)->()){
         let db=Firestore.firestore()
         db.collection("posts").document(documentID).delete { (error) in
@@ -104,6 +101,43 @@ class Post{
                 print("successfully deleted document \(self.documentID)")
                 completion(true)
             }
+        }
+    }
+    
+    
+    func getImageID() -> String {
+        var id=""
+        let db=Firestore.firestore()
+        db.collection("posts").document(documentID).collection("photos").getDocuments { (querySnapshot, error) in
+            guard error == nil else {
+                print("ERROR: adding the snapshot listener \(error!.localizedDescription)")
+                return
+            }
+            
+            for document in querySnapshot!.documents{
+                
+            }
+           
+        }
+        return id
+        
+    }
+    
+    func deleteImage(){
+       
+        let storage=Storage.storage()
+        
+        let storageRef = storage.reference().child(documentID).child(documentID)
+
+        storageRef.delete{ error in
+            if let error = error {
+                print("ERROR: Couldn't delete photo \(error.localizedDescription)")
+                
+            }else{
+                print("Photo successfully deleted",self.documentID)
+                
+            }
+            
         }
     }
     

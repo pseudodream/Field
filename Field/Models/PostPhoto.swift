@@ -123,4 +123,29 @@ class PostPhoto{
         }
     }
     
+    private func deleteImage(post: Post){
+        guard post.documentID != "" else {
+            print("ERROR: Did not pass a valid spot")
+            return
+        }
+        
+        let storage=Storage.storage()
+        
+        let storageRef = storage.reference().child(post.documentID).child(documentID)
+
+        storageRef.delete{ error in
+            if let error = error {
+                print("ERROR: Couldn't delete photo \(error.localizedDescription)")
+                
+            }else{
+                print("Photo successfully deleted",self.documentID)
+                
+            }
+            
+        }
+        
+    }
+    
+    
+    
 }

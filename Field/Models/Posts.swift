@@ -35,6 +35,8 @@ class Posts{
         }
     }
     
+    
+    
     func loadUserData(appUser:AppUser,completed: @escaping()->()){
         db.collection("posts").addSnapshotListener { (querySnapshot, error) in
             guard error == nil else{

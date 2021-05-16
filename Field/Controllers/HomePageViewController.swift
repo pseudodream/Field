@@ -13,6 +13,7 @@ class HomePageViewController: UIViewController {
     var appUser: AppUser!
     var posts: Posts!
     
+    @IBOutlet weak var segmentedControl: UISegmentedControl!
     @IBOutlet weak var tableView: UITableView!
     let userid=Auth.auth().currentUser?.uid ?? ""
     
@@ -29,22 +30,29 @@ class HomePageViewController: UIViewController {
                 print("new user added")
             }
             appUser.loadData(id: userid){
-                print("user loaded")
+                print("current user loaded")
             }
         }
-        
+        segmentedControl.selectedSegmentIndex=0
+        configureSegmentedControl()
+     
+        posts.loadData{
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+            }
+        }
     }
+
     
     
     override func viewWillAppear(_ animated: Bool) {
+        segmentedControl.selectedSegmentIndex=0
         appUser.loadData(id: userid){
         }
        
-        posts.loadData{
-            self.tableView.reloadData()
-        }
+        navigationController?.setToolbarHidden(true, animated: true)
         
-        navigationController?.setToolbarHidden(false, animated: false)
+
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -60,6 +68,31 @@ class HomePageViewController: UIViewController {
             
         }
         
+    }
+    
+    func configureSegmentedControl(){
+        let FontColor=[NSAttributedString.Key.foregroundColor:UIColor(named:"textcolor") ?? UIColor.orange]
+        segmentedControl.setTitleTextAttributes(FontColor, for:.selected)
+        segmentedControl.setTitleTextAttributes(FontColor, for:.normal)
+       
+        
+    }
+    @IBAction func segmentedControlPressed(_ sender: UISegmentedControl) {
+        sortBasedOnSegmentPressed()
+    }
+    
+    func sortBasedOnSegmentPressed(){
+        switch segmentedControl.selectedSegmentIndex{
+        case 0: print("default")
+        case 1:posts.postArray.sort(by: {$0.date > $1.date})
+        case 2:posts.postArray.sort(by: {$0.numberOfLikes>$1.numberOfLikes})
+    
+        default:
+            print("check segment control for error")
+        }
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+        }
     }
     
     
@@ -82,7 +115,7 @@ extension HomePageViewController: UITableViewDelegate,UITableViewDataSource{
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! PostTableViewCell
-       
+        //cell.user=
         cell.post=posts.postArray[indexPath.row]
         return cell
         

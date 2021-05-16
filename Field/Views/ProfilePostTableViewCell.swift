@@ -7,6 +7,7 @@
 
 import UIKit
 import Firebase
+import SDWebImage
 private let dateFormatter: DateFormatter = {
     let dateFormatter=DateFormatter()
     dateFormatter.dateStyle = .medium
@@ -25,7 +26,11 @@ class ProfilePostTableViewCell: UITableViewCell {
     @IBOutlet weak var hashtagLabel: UILabel!
     
     var post: Post!{
+        
+        
         didSet{
+            imagePosted.image=UIImage()
+            pfpImage.image=UIImage()
             likeCountLabel.text="\(post.numberOfLikes)"
             let id=post.postUserID
             var appUser=AppUser(userid:id)
@@ -43,9 +48,16 @@ class ProfilePostTableViewCell: UITableViewCell {
                 for document in querySnapshot!.documents{
                     userPhoto.documentID=document.documentID
                     userPhoto.loadImage(appUser:appUser){(success) in
+                        guard let url = URL(string: userPhoto.photoURL) else {
+                            self.pfpImage.image = userPhoto.image
+                            return
+                        }
+                        self.pfpImage.sd_imageTransition = .fade
+                        self.pfpImage.sd_imageTransition?.duration = 0.5
+                        self.pfpImage.sd_setImage(with: url)
                         self.pfpImage.layer.cornerRadius=self.pfpImage.frame.size.width/2
                         self.pfpImage.clipsToBounds=true
-                        self.pfpImage.image=userPhoto.image
+                        //self.pfpImage.image=userPhoto.image
                         
                     }
                 }

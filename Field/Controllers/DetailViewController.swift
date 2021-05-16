@@ -7,6 +7,7 @@
 
 import UIKit
 import Firebase
+import SDWebImage
 
 private let dateFormatter: DateFormatter = {
     let dateFormatter=DateFormatter()
@@ -38,37 +39,39 @@ class DetailViewController: UIViewController {
     var appUser:AppUser!
     override func viewDidLoad() {
         super.viewDidLoad()
-        comments=Comments()
-        
-        comments.loadData(post: post) {
-            self.tableView.reloadData()
-        }
-        
         tableView.delegate=self
         tableView.dataSource=self
         
-        updateUI()
+        userName.text=""
+        dateLabel.text=""
         
-
+        comments=Comments()
+        
+        updateUI()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         comments.loadData(post: post) {
-            self.tableView.reloadData()
-            self.updateUI()
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+                self.updateUI()
+            }
         }
+        
+        
     }
     
     func updateUI(){
         if post.postUserID != Auth.auth().currentUser?.uid{
             deleteButton.isHidden=true
-            
-            
         }
+        var d=post.getImageID()
+        print("dddd",d )
         
         var postUser=AppUser(userid: post.postUserID )
         postUser.loadData(id: post.postUserID) {
             self.userName.text=postUser.displayName
+            
         }
         
         let db=Firestore.firestore()
@@ -81,15 +84,24 @@ class DetailViewController: UIViewController {
             for document in querySnapshot!.documents{
                 userPhoto.documentID=document.documentID
                 userPhoto.loadImage(appUser:postUser){(success) in
+                  
+                    guard let url = URL(string: userPhoto.photoURL) else {
+                        self.profilePic.image = userPhoto.image
+                        return
+                    }
+                    self.profilePic.sd_imageTransition = .fade
+                    self.profilePic.sd_imageTransition?.duration = 0.5
+                    self.profilePic.sd_setImage(with: url)
+                    print("uu",url)
                     self.profilePic.layer.cornerRadius=self.profilePic.frame.size.width/2
                     self.profilePic.clipsToBounds=true
-                    self.profilePic.image=userPhoto.image
+                   // self.profilePic.image=userPhoto.image
                     
                 }
             }
         }
        
-        dateLabel.text="Posted on:\(dateFormatter.string(from: post.date))"
+        dateLabel.text="Posted on: \(dateFormatter.string(from: post.date))"
         likesCountLabel.text="\(post.numberOfLikes)"
         commentCountLabel.text="Comments (\(comments.commentArray.count))"
         titleLabel.text=post.title
@@ -139,15 +151,12 @@ class DetailViewController: UIViewController {
    
    
     @IBAction func deleteButton(_ sender: UIButton) {
-        post.deleteData{(success) in
-            //self.dismiss(animated: true, completion: nil)
-        }
         let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
         let nextViewController = storyBoard.instantiateViewController(withIdentifier: "home") as! HomePageViewController
-        
-        self.navigationController?.pushViewController(nextViewController, animated: true)
-        
-    
+        post.deleteData{(success) in
+            self.navigationController?.pushViewController(nextViewController, animated: true)
+        }
+       
     }
 }
 

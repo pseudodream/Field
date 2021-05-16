@@ -27,7 +27,6 @@ class ProfileViewController: UIViewController {
         updateUserFromCloud()
         posts=Posts()
         posts.loadUserData(appUser: appUser) {
-            print(self.posts.postArray.count)
             self.tableView.reloadData()
         }
         

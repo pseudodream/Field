@@ -54,6 +54,7 @@ class UserPhoto{
         
         let storageRef=storage.reference().child(appUser.documentID).child(documentID)
         
+        
         let uploadTask=storageRef.putData(photoData, metadata: uploadMetaData) { (metadata, error) in
             if let error = error{
                 print("ERROR:upload your ref \(uploadMetaData) failed. \(error.localizedDescription)")
@@ -99,14 +100,61 @@ class UserPhoto{
         
     }
     
+//    func loadContent(appUser:AppUser, completion: @escaping (Bool) -> ()) {
+//        guard appUser.documentID != "" else {
+//            print("ERROR: did not pass a valid user into loadImage")
+//            return
+//        }
+//
+//        let db=Firestore.firestore()
+//        let ref=db.collection("users").document(appUser.documentID).collection("profilePicture").document(self.documentID)
+//        ref.getDocument { (document, error) in
+//            if let error = error {
+//                print("ERROR: \(error.localizedDescription)")
+//                return completion(false)
+//            }
+//            if let document=document, document.exists{
+//                let userPhoto=UserPhoto(dictionary: document.data()!)
+//                self.photoURL=userPhoto.photoURL
+//            }
+//
+//        }
+//
+//        let storage = Storage.storage()
+//        let storageRef = storage.reference().child(appUser.documentID).child(documentID)
+//        storageRef.getData(maxSize: 25 * 1024 * 1024) { (data, error) in
+//            if let error = error {
+//                print("ERROR: an error occurred while reading data from file ref: \(storageRef) error = \(error.localizedDescription)")
+//                return completion(false)
+//            } else {
+//
+//                self.image = UIImage(data: data!) ?? UIImage()
+//                return completion(true)
+//            }
+//        }
+//
+//
+//    }
+    
     func loadImage(appUser:AppUser, completion: @escaping (Bool) -> ()) {
         guard appUser.documentID != "" else {
-            print("ERROR: did not pass a valid spot into loadImage")
+            print("ERROR: did not pass a valid user into loadImage")
             return
         }
         
         let db=Firestore.firestore()
-        //let ref=db.collection("users").document(appUser.documentID).collection("profilePicture").document(self.documentID)
+        let ref=db.collection("users").document(appUser.documentID).collection("profilePicture").document(self.documentID)
+        ref.getDocument { (document, error) in
+            if let error = error {
+                print("ERROR: \(error.localizedDescription)")
+                return completion(false)
+            }
+            if let document=document, document.exists{
+                let userPhoto=UserPhoto(dictionary: document.data()!)
+                self.photoURL=userPhoto.photoURL
+            }
+            
+        }
         
         let storage = Storage.storage()
         let storageRef = storage.reference().child(appUser.documentID).child(documentID)
@@ -115,6 +163,7 @@ class UserPhoto{
                 print("ERROR: an error occurred while reading data from file ref: \(storageRef) error = \(error.localizedDescription)")
                 return completion(false)
             } else {
+                
                 self.image = UIImage(data: data!) ?? UIImage()
                 return completion(true)
             }
