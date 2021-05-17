@@ -48,6 +48,9 @@ class PostTableViewCell: UITableViewCell {
             appUser.loadData(id: id){
                 self.userNameLabel.text=appUser.displayName
             }
+            self.pfpImage.layer.cornerRadius=self.pfpImage.frame.size.width/2
+            self.pfpImage.clipsToBounds=true
+            
             appUser.loadImage { (success) in
                 guard let url = URL(string: appUser.photoURL) else {
                     self.pfpImage.image = appUser.image
@@ -56,8 +59,7 @@ class PostTableViewCell: UITableViewCell {
                 self.pfpImage.sd_imageTransition = .fade
                 self.pfpImage.sd_imageTransition?.duration = 0.5
                 self.pfpImage.sd_setImage(with: url)
-                self.pfpImage.layer.cornerRadius=self.pfpImage.frame.size.width/2
-                self.pfpImage.clipsToBounds=true
+                
             }
             
             
