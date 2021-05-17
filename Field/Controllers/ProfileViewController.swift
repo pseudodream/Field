@@ -25,6 +25,7 @@ class ProfileViewController: UIViewController {
         tableView.delegate=self
         
         updateUserFromCloud()
+        
         posts=Posts()
         posts.loadUserData(appUser: appUser) {
             self.tableView.reloadData()
@@ -39,26 +40,26 @@ class ProfileViewController: UIViewController {
     
     func updateUserFromCloud(){
         appUser.loadData(id: userid){
-            self.userName.text=self.appUser.displayName
-            self.intro.text=self.appUser.intro
+            self.userName.text = self.appUser.displayName == "" ? "UserName" : self.appUser.displayName
+            self.intro.text = self.appUser.intro
+            
         }
-       
-        let db=Firestore.firestore()
-        var userPhoto=UserPhoto()
-        db.collection("users").document(userid).collection("profilePicture").getDocuments { (querySnapshot, error) in
-            guard error == nil else {
-                print("ERROR: adding the snapshot listener \(error!.localizedDescription)")
-               return
+        appUser.loadImage { (success) in
+            guard let url = URL(string: self.appUser.photoURL) else {
+                self.profileImage.image=self.appUser.image
+                return
             }
-            for document in querySnapshot!.documents{
-                userPhoto.documentID=document.documentID
-                userPhoto.loadImage(appUser:self.appUser){(success) in
-                    self.profileImage.layer.cornerRadius=self.profileImage.frame.size.width/2
-                    self.profileImage.clipsToBounds=true
-                    self.profileImage.image=userPhoto.image
-                    
-                }
-            }
+            
+            self.profileImage.layer.cornerRadius=self.profileImage.frame.size.width/2
+            self.profileImage.clipsToBounds=true
+            self.profileImage.sd_imageTransition = .fade
+            self.profileImage.sd_imageTransition?.duration = 0.5
+            self.profileImage.sd_setImage(with: url)
+            
+        }
+        
+        if profileImage.image==UIImage(){
+            profileImage.image=UIImage(named: "logo")
         }
         
     }

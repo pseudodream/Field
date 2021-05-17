@@ -7,29 +7,28 @@
 
 import UIKit
 import Firebase
+import SDWebImage
 
 class EditViewController: UIViewController {
     
     @IBOutlet weak var nameTextField: UITextField!
     @IBOutlet weak var introTextField: UITextView!
     @IBOutlet weak var pfpImage: UIImageView!
-    @IBOutlet weak var coverImage: UIImageView!
+    
     
     var appUser: AppUser!
-    var userPhoto: UserPhoto!
     let userid=Auth.auth().currentUser?.uid ?? ""
     var imagePickerController=UIImagePickerController()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        userPhoto=UserPhoto()
+      
         
         let tap = UITapGestureRecognizer(target: self.view, action: #selector(UIView.endEditing(_:)))
         tap.cancelsTouchesInView = false
         self.view.addGestureRecognizer(tap)
         
         imagePickerController.delegate=self
-        updateUserFromCloud()
         
     }
     
@@ -39,56 +38,35 @@ class EditViewController: UIViewController {
     
     func updateUserFromCloud(){
         appUser.loadData(id: userid){
-           
-        }
-        nameTextField.text=appUser.displayName
-        introTextField.text=appUser.intro
-        let db=Firestore.firestore()
-        var userPhoto=UserPhoto()
-        db.collection("users").document(appUser.documentID).collection("profilePicture").getDocuments { (querySnapshot, error) in
-            guard error == nil else {
-                print("ERROR: adding the snapshot listener \(error!.localizedDescription)")
-               return
+            self.nameTextField.text=self.appUser.displayName
+            self.introTextField.text=self.appUser.intro
+            self.pfpImage.layer.cornerRadius=self.pfpImage.frame.size.width/2
+            self.pfpImage.clipsToBounds=true
+            guard let url = URL(string: self.appUser.photoURL) else {
+                self.pfpImage.image=self.appUser.image
+                return
             }
-            for document in querySnapshot!.documents{
-                userPhoto.documentID=document.documentID
-                print(document.documentID)
-                userPhoto.loadImage(appUser:self.appUser){(success) in
-                    self.pfpImage.image=userPhoto.image
-                    self.pfpImage.layer.cornerRadius=self.pfpImage.frame.size.width/2
-                    self.pfpImage.clipsToBounds=true
-                    guard let url = URL(string: userPhoto.photoURL) else {
-                        return
-                    }
-                    
-                    self.pfpImage.sd_imageTransition = .fade
-                    self.pfpImage.sd_imageTransition?.duration = 0.5
-                    self.pfpImage.sd_setImage(with: url)
-                }
-            }
-        }
-       
-        
-    }
     
-    func updateUser(){
-        appUser.displayName=nameTextField.text!
-        appUser.intro=introTextField.text!
-        appUser.saveData { (success) in
-            print("user info saved")
+            self.pfpImage.sd_imageTransition = .fade
+            self.pfpImage.sd_imageTransition?.duration = 0.5
+            self.pfpImage.sd_setImage(with: url)
+            
+            
         }
-        userPhoto.image=pfpImage.image ?? UIImage()
-        userPhoto.saveData(appUser: appUser) { (success) in
-            print("imageSaved")
-        }
-        
+    
     }
     
     
     @IBAction func saveButtonPressed(_ sender: UIBarButtonItem) {
-        updateUser()
+        appUser.displayName=nameTextField.text!
+        appUser.intro=introTextField.text!
+        appUser.image=pfpImage.image ?? UIImage(named: "logo")! //this is the default profile image
+        appUser.saveData { (success) in
+            print("user info saved")
+        }
         
     }
+    
     func showAlert(title:String, message: String){
         let alertController=UIAlertController(title: title,message: message,preferredStyle: .alert)
         let alertAction=UIAlertAction(title:"OK",style: .default, handler: nil)

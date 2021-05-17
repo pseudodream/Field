@@ -26,7 +26,16 @@ class ProfilePostTableViewCell: UITableViewCell {
     @IBOutlet weak var hashtagLabel: UILabel!
     
     var post: Post!{
-        
+        willSet{
+            pfpImage.image=nil
+            imagePosted.image=nil
+            dateLabel.text=""
+            userNameLabel.text=""
+            textPosted.text=""
+            titleLabel.text=""
+            hashtagLabel.text=""
+            likeCountLabel.text=""
+        }
         
         didSet{
             imagePosted.image=UIImage()
@@ -38,49 +47,36 @@ class ProfilePostTableViewCell: UITableViewCell {
                 self.userNameLabel.text=appUser.displayName
             }
             
-            let db=Firestore.firestore()
-            var userPhoto=UserPhoto()
-            db.collection("users").document(appUser.documentID).collection("profilePicture").getDocuments { (querySnapshot, error) in
-                guard error == nil else {
-                    print("ERROR: adding the snapshot listener \(error!.localizedDescription)")
-                   return
+            appUser.loadImage { (success) in
+                guard let url = URL(string: appUser.photoURL) else {
+                    self.pfpImage.image = appUser.image
+                    return
                 }
-                for document in querySnapshot!.documents{
-                    userPhoto.documentID=document.documentID
-                    userPhoto.loadImage(appUser:appUser){(success) in
-                        guard let url = URL(string: userPhoto.photoURL) else {
-                            self.pfpImage.image = userPhoto.image
-                            return
-                        }
-                        self.pfpImage.sd_imageTransition = .fade
-                        self.pfpImage.sd_imageTransition?.duration = 0.5
-                        self.pfpImage.sd_setImage(with: url)
-                        self.pfpImage.layer.cornerRadius=self.pfpImage.frame.size.width/2
-                        self.pfpImage.clipsToBounds=true
-                        //self.pfpImage.image=userPhoto.image
-                        
-                    }
-                }
+                self.pfpImage.sd_imageTransition = .fade
+                self.pfpImage.sd_imageTransition?.duration = 0.5
+                self.pfpImage.sd_setImage(with: url)
+                self.pfpImage.layer.cornerRadius=self.pfpImage.frame.size.width/2
+                self.pfpImage.clipsToBounds=true
             }
+            
+            
+           
             
             titleLabel.text=post.title
             if post.hasImage == true{
                 textPosted.isHidden=true
-                var postPhoto=PostPhoto()
-                db.collection("posts").document(post.documentID).collection("photos").getDocuments { (querySnapshot, error) in
-                    guard error == nil else {
-                        print("ERROR: adding the snapshot listener \(error!.localizedDescription)")
-                       return
+                textPosted.isHidden=true
+                post.loadImage { (success) in
+                    guard let url = URL(string: self.post.photoURL) else {
+                        self.imagePosted.image = self.post.image
+                        return
                     }
-                    for document in querySnapshot!.documents{
-                        postPhoto.documentID=document.documentID//currently only support add one photo per post
-                        postPhoto.loadImage(post: self.post){(success) in
-                            
-                            self.imagePosted.image=postPhoto.image
-                            
-                        }
-                    }
+                    self.imagePosted.sd_imageTransition = .fade
+                    self.imagePosted.sd_imageTransition?.duration = 0.5
+                    self.imagePosted.sd_setImage(with: url)
+                    
                 }
+                
                 
             }else{
                 imagePosted.isHidden=true

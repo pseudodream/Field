@@ -18,7 +18,7 @@ class PostPictureViewController: UIViewController {
     var post: Post!
     let userid=Auth.auth().currentUser?.uid ?? ""
     var imagePickerController=UIImagePickerController()
-    var postPhoto: PostPhoto!
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,24 +29,27 @@ class PostPictureViewController: UIViewController {
         if post == nil{
             post=Post()
         }
-        if postPhoto==nil{
-            postPhoto=PostPhoto()
-        }
+       
         imagePickerController.delegate=self
 
     }
+    
     
     func leaveViewController(){
         let isPresentingInAddMode=presentingViewController is UINavigationController
         if isPresentingInAddMode{
             let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-            let nextViewController = storyBoard.instantiateViewController(withIdentifier: "home") as! HomePageViewController
-            self.navigationController?.pushViewController(nextViewController, animated: true)
+
+            let nextViewController = storyBoard.instantiateViewController(withIdentifier: "home") as! HomeViewController
+            
+        self.navigationController?.pushViewController(nextViewController, animated: true)
             
         }else{
             navigationController?.popViewController(animated: true)
         }
+        
     }
+   
     
     func showAlert(title:String, message: String){
         let alertController=UIAlertController(title: title,message: message,preferredStyle: .alert)
@@ -76,15 +79,16 @@ class PostPictureViewController: UIViewController {
         post.hashtag=hashtagTextField.text!
         post.postUserID=userid
         post.hasImage=true
-        print("sss",post.date,post.postUserID)
+        post.image=imageView.image!
         
-        postPhoto.image=imageView.image!
-        
-        post.saveData { (success) in
-            self.postPhoto.saveData(post: self.post) { (success) in
-                self.leaveViewController()
-            }
+        post.saveDataWithImage { 
+          
+            self.leaveViewController()
+            
         }
+        
+        
+        
         
         
     }
@@ -98,6 +102,7 @@ class PostPictureViewController: UIViewController {
 extension PostPictureViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate{
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         if let editedImage=info[UIImagePickerController.InfoKey.editedImage] as? UIImage{
+            
             imageView.image=editedImage
            
             

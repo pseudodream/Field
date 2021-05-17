@@ -12,31 +12,36 @@ import Firebase
 class AppUser{
     var displayName: String
     var intro: String
+    var photoURL: String
+    var image: UIImage
     var documentID:String
     
-    init(displayName:String,intro:String, documentID:String){
+    init(displayName:String,intro:String,photoURL: String,image: UIImage, documentID:String){
         self.displayName=displayName
         self.intro=intro
+        self.photoURL = photoURL
+        self.image=image
         self.documentID = documentID
     }
     
     var dictionary: [String:Any]{
-        return ["displayName":displayName,"intro":intro]
+        return ["displayName":displayName,"intro":intro,"photoURL":photoURL]
     }
-
+    
     
     convenience init(user:User){
-        self.init(displayName:"",intro:"",documentID:user.uid)
+        self.init(displayName:"",intro:"",photoURL:"",image: UIImage(named: "logo")!, documentID:user.uid)
     }
     convenience init(userid:String){
-        self.init(displayName:"",intro:"", documentID:userid)
+        self.init(displayName:"",intro:"", photoURL:"", image: UIImage(named: "logo")!, documentID:userid)
     }
     
     convenience init(dictionary: [String:Any]){
         let displayName=dictionary["displayName"] as! String? ?? ""
         let intro=dictionary["intro"] as! String? ?? ""
+        let photoURL=dictionary["photoURL"] as! String? ?? ""
         
-        self.init(displayName:displayName,intro:intro, documentID:"")
+        self.init(displayName:displayName,intro:intro,photoURL:photoURL, image:UIImage(named: "logo")!,documentID:"")
         
     }
     
@@ -68,60 +73,129 @@ class AppUser{
         let db = Firestore.firestore()
         
         
-        let dataToSave: [String:Any]=self.dictionary
+        let storage=Storage.storage()
         
-        if self.documentID==""{
-            var ref: DocumentReference?=nil //create new id
-            ref=db.collection("users").addDocument(data: dataToSave){
-                (error) in
-                guard error==nil else{
-                    print("ERROR: adding document \(error!.localizedDescription)")
-                    return completion(false)
-                }
-                self.documentID=ref!.documentID
-                print("Added document: \(self.documentID)")
-                completion(true)
+        //convert photo.image to jpeg
+        guard let photoData=self.image.jpegData(compressionQuality: 0.5) else {
+            print("ERROR:couldn't convert photo.image to data")
+            return
+        }
+        
+        let  uploadMetaData = StorageMetadata()
+        uploadMetaData.contentType="image/jpeg"
+        
+        //create filename
+        if documentID == ""{
+            documentID=UUID().uuidString
+            
+        }
+        
+        let storageRef=storage.reference().child(documentID)
+        
+        
+        let uploadTask=storageRef.putData(photoData, metadata: uploadMetaData) { (metadata, error) in
+            if let error = error{
+                print("ERROR:upload your ref \(uploadMetaData) failed. \(error.localizedDescription)")
             }
             
-        }else { //save to existing documentid
+            completion(true)
+        }
+        
+        uploadTask.observe(.success) { (snapshot) in
+            print("upload to Firebase storage successful")
+            storageRef.downloadURL { (url, error) in
+                guard error == nil else {
+                    print("ERROR: couldn't create a download url \(error!.localizedDescription)")
+                    return completion(false)
+                }
+                
+                guard let url = url else{
+                    print("ERROR: url is nil \(error!.localizedDescription)")
+                    return completion(false)
+                }
+                self.photoURL = "\(url)"
+                
+                let dataToSave = self.dictionary
+                let ref = db.collection("users").document(self.documentID)
+                ref.setData(dataToSave) { (error) in
+                    guard error == nil else {
+                        print("ERROR: updating document \(error!.localizedDescription)")
+                        return completion(false)
+                    }
+                    print("Updated document: \(self.documentID)" )
+                    completion(true)
+                }
+            }
+        }
+        
+        uploadTask.observe(.failure) { (snapshot) in
+            if let error = snapshot.error {
+                print("ERROR:upload task for file \(self.documentID) failed, with error  \(error.localizedDescription)")
+            }
+            
+            completion(false)
+        }
+    }
+        
+        
+        
+        
+        func loadData(id: String,completed: @escaping()->()){
+            let db=Firestore.firestore()
+            
+            let ref=db.collection("users").document(id)
+            
+            ref.getDocument { (document, error) in
+                if let error = error {
+                    print("ERROR: \(error.localizedDescription)")
+                    return completed()
+                }
+                
+                if let document=document, document.exists{
+                    let appUser=AppUser(dictionary: document.data()!)
+                    self.displayName=appUser.displayName
+                    
+                    self.intro=appUser.intro
+                    
+                }else{
+                    print("document DNE")
+                }
+                
+                completed()
+            }
+            
+        }
+        
+        func loadImage(completion: @escaping (Bool) -> ()) {
+            
+            let db=Firestore.firestore()
             let ref=db.collection("users").document(self.documentID)
-            ref.setData(dataToSave){(error) in
-                guard error==nil else{
-                    print("ERROR: updating document \(error!.localizedDescription)")
+            ref.getDocument { (document, error) in
+                if let error = error {
+                    print("ERROR: \(error.localizedDescription)")
                     return completion(false)
                 }
-                print("Updated document: \(self.documentID)")
-                completion(true)
-            }
-        }
-    }
-    
-    func loadData(id: String,completed: @escaping()->()){
-        let db=Firestore.firestore()
-        
-        let ref=db.collection("users").document(id)
-        
-        ref.getDocument { (document, error) in
-            if let error = error {
-                print("ERROR: \(error.localizedDescription)")
-                return completed()
+                if let document=document, document.exists{
+                    let userPhoto=AppUser(dictionary: document.data()!)
+                    self.photoURL=userPhoto.photoURL
+                }
+                
             }
             
-            if let document=document, document.exists{
-                let appUser=AppUser(dictionary: document.data()!)
-                self.displayName=appUser.displayName
-                
-                self.intro=appUser.intro
-                
-            }else{
-                print("document DNE")
+            let storage = Storage.storage()
+            let storageRef = storage.reference().child(documentID)
+            storageRef.getData(maxSize: 25 * 1024 * 1024) { (data, error) in
+                if let error = error {
+                    print("ERROR: an error occurred while reading data from file ref: \(storageRef) error = \(error.localizedDescription)")
+                    return completion(false)
+                } else {
+                    
+                    self.image = UIImage(data: data!) ?? UIImage()
+                    return completion(true)
+                }
             }
-            
-            completed()
         }
         
     }
-    
-}
 
 

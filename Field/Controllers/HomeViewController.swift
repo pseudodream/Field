@@ -9,7 +9,7 @@ import UIKit
 import Firebase
 import SDWebImage
 
-class HomePageViewController: UIViewController {
+class HomeViewController: UIViewController {
     var appUser: AppUser!
     var posts: Posts!
     
@@ -25,7 +25,7 @@ class HomePageViewController: UIViewController {
     
         if appUser==nil{
             appUser=AppUser(user: Auth.auth().currentUser!)
-            
+           
             appUser.saveIfNewUser { (success) in
                 print("new user added")
             }
@@ -33,25 +33,24 @@ class HomePageViewController: UIViewController {
                 print("current user loaded")
             }
         }
-        segmentedControl.selectedSegmentIndex=0
+       
+       
         configureSegmentedControl()
      
-        posts.loadData{
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
-            }
-        }
+        
     }
 
     
     
     override func viewWillAppear(_ animated: Bool) {
-        segmentedControl.selectedSegmentIndex=0
-        appUser.loadData(id: userid){
-        }
-       
-        navigationController?.setToolbarHidden(true, animated: true)
         
+        segmentedControl.selectedSegmentIndex=0
+        navigationController?.setToolbarHidden(true, animated: true)
+        posts.loadData{
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+            }
+        }
 
     }
     
@@ -108,14 +107,14 @@ class HomePageViewController: UIViewController {
     
 } 
 
-extension HomePageViewController: UITableViewDelegate,UITableViewDataSource{
+extension HomeViewController: UITableViewDelegate,UITableViewDataSource{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return posts.postArray.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! PostTableViewCell
-        //cell.user=
+        
         cell.post=posts.postArray[indexPath.row]
         return cell
         

@@ -25,7 +25,7 @@ class PostTextViewController: UIViewController {
         
         if post == nil{
             post=Post()
-            print(post.date)
+            
         }
         
     }
@@ -35,8 +35,8 @@ class PostTextViewController: UIViewController {
         if isPresentingInAddMode{
             let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
 
-            let nextViewController = storyBoard.instantiateViewController(withIdentifier: "home") as! HomePageViewController
-            print("leaving")
+            let nextViewController = storyBoard.instantiateViewController(withIdentifier: "home") as! HomeViewController
+           
             self.navigationController?.pushViewController(nextViewController, animated: true)
             
         }else{
@@ -51,7 +51,7 @@ class PostTextViewController: UIViewController {
         post.hashtag=hashtagTextField.text!
         post.postUserID=userid
         post.saveData { (success) in
-            print("saved ")
+           
             self.leaveViewController()
         }
         

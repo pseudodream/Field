@@ -17,7 +17,7 @@ private let dateFormatter: DateFormatter = {
 }()
 
 class DetailViewController: UIViewController {
-
+    
     @IBOutlet weak var profilePic: UIImageView!
     @IBOutlet weak var userName: UILabel!
     @IBOutlet weak var dateLabel: UILabel!
@@ -51,6 +51,7 @@ class DetailViewController: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        navigationController?.setToolbarHidden(true, animated: true)
         comments.loadData(post: post) {
             DispatchQueue.main.async {
                 self.tableView.reloadData()
@@ -65,42 +66,28 @@ class DetailViewController: UIViewController {
         if post.postUserID != Auth.auth().currentUser?.uid{
             deleteButton.isHidden=true
         }
-        var d=post.getImageID()
-        print("dddd",d )
+        
         
         var postUser=AppUser(userid: post.postUserID )
         postUser.loadData(id: post.postUserID) {
             self.userName.text=postUser.displayName
-            
         }
         
-        let db=Firestore.firestore()
-        var userPhoto=UserPhoto()
-        db.collection("users").document(postUser.documentID).collection("profilePicture").getDocuments { (querySnapshot, error) in
-            guard error == nil else {
-                print("ERROR: adding the snapshot listener \(error!.localizedDescription)")
-               return
+        postUser.loadImage { (success) in
+            
+            self.profilePic.layer.cornerRadius=self.profilePic.frame.size.width/2
+            self.profilePic.clipsToBounds=true
+            
+            guard let url = URL(string: postUser.photoURL) else {
+                self.profilePic.image=postUser.image
+                return
             }
-            for document in querySnapshot!.documents{
-                userPhoto.documentID=document.documentID
-                userPhoto.loadImage(appUser:postUser){(success) in
-                  
-                    guard let url = URL(string: userPhoto.photoURL) else {
-                        self.profilePic.image = userPhoto.image
-                        return
-                    }
-                    self.profilePic.sd_imageTransition = .fade
-                    self.profilePic.sd_imageTransition?.duration = 0.5
-                    self.profilePic.sd_setImage(with: url)
-                    print("uu",url)
-                    self.profilePic.layer.cornerRadius=self.profilePic.frame.size.width/2
-                    self.profilePic.clipsToBounds=true
-                   // self.profilePic.image=userPhoto.image
-                    
-                }
-            }
+            self.profilePic.sd_imageTransition = .fade
+            self.profilePic.sd_imageTransition?.duration = 0.5
+            self.profilePic.sd_setImage(with: url)
         }
-       
+        
+        
         dateLabel.text="Posted on: \(dateFormatter.string(from: post.date))"
         likesCountLabel.text="\(post.numberOfLikes)"
         commentCountLabel.text="Comments (\(comments.commentArray.count))"
@@ -109,24 +96,20 @@ class DetailViewController: UIViewController {
         if post.hasImage{
             imageDescriptionTextView.text=post.body
             textView.isHidden=true
-            var postPhoto=PostPhoto()
-            let db=Firestore.firestore()
-            db.collection("posts").document(post.documentID).collection("photos").getDocuments { (querySnapshot, error) in
-                guard error == nil else {
-                    print("ERROR: adding the snapshot listener \(error!.localizedDescription)")
-                   return
-                }
-                for document in querySnapshot!.documents{
-                    postPhoto.documentID=document.documentID//currently only support add one photo per post
-                    postPhoto.loadImage(post: self.post){(success) in
-                        self.imageView.image=postPhoto.image
-                    }
-                }
+            guard let url = URL(string: postUser.photoURL) else {
+                self.imageView.image=self.post.image
+                
+                return
             }
+            self.imageView.sd_imageTransition = .fade
+            self.imageView.sd_imageTransition?.duration = 0.5
+            self.imageView.sd_setImage(with: url)
+            
         }else{
             imageView.isHidden=true
             imageDescriptionTextView.isHidden=true
             textView.text=post.body
+            
         }
         
     }
@@ -139,7 +122,7 @@ class DetailViewController: UIViewController {
     
     
     @IBAction func CommentPressed(_ sender: UIButton) {
-    
+        
         let popOverViewController=UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "comment") as! CommentViewController
         popOverViewController.post=self.post
         self.addChild(popOverViewController)
@@ -148,15 +131,15 @@ class DetailViewController: UIViewController {
         popOverViewController.didMove(toParent: self)
     }
     
-   
-   
+    
+    
     @IBAction func deleteButton(_ sender: UIButton) {
         let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-        let nextViewController = storyBoard.instantiateViewController(withIdentifier: "home") as! HomePageViewController
+        let nextViewController = storyBoard.instantiateViewController(withIdentifier: "home") as! HomeViewController
         post.deleteData{(success) in
             self.navigationController?.pushViewController(nextViewController, animated: true)
         }
-       
+        
     }
 }
 
@@ -177,3 +160,4 @@ extension DetailViewController: UITableViewDelegate,UITableViewDataSource{
     
     
 }
+
