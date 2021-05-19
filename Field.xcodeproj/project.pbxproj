@@ -23,14 +23,14 @@
 		6D7551A0264E7AA300F91D2A /* Artwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D75519F264E7AA300F91D2A /* Artwork.swift */; };
 		6D7551E7264EA07A00F91D2A /* ArtworkTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D7551E6264EA07A00F91D2A /* ArtworkTableViewController.swift */; };
 		6D75522C264ED11000F91D2A /* ProfilePostTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D75522B264ED10D00F91D2A /* ProfilePostTableViewCell.swift */; };
-		6DBED5FD264EFD6E00CB6C09 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6DBED5FC264EFD6E00CB6C09 /* GoogleService-Info.plist */; };
 		6DCCC088264827540037DDDE /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DCCC087264827540037DDDE /* ProfileViewController.swift */; };
 		6DCCC09526482B2E0037DDDE /* EditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DCCC09426482B2E0037DDDE /* EditViewController.swift */; };
 		6DCCC09826482DE70037DDDE /* AppUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DCCC09726482DE70037DDDE /* AppUser.swift */; };
-		6DCCC0A726483A6F0037DDDE /* UIViewController+alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DCCC0A626483A6F0037DDDE /* UIViewController+alert.swift */; };
 		6DD485F82651C1E100CFC5B5 /* AppUsers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DD485F72651C1E100CFC5B5 /* AppUsers.swift */; };
 		6DD486372651E79700CFC5B5 /* UsersListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DD486362651E79700CFC5B5 /* UsersListViewController.swift */; };
 		6DD486472651EA2F00CFC5B5 /* UsersTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DD486462651EA2F00CFC5B5 /* UsersTableViewCell.swift */; };
+		6DE120612655314000E3ABED /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6DE120602655314000E3ABED /* GoogleService-Info.plist */; };
+		6DE120652655322400E3ABED /* UIViewController+alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DE120642655322400E3ABED /* UIViewController+alert.swift */; };
 		6DF6C09326262F6600850C6C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DF6C09226262F6600850C6C /* AppDelegate.swift */; };
 		6DF6C09526262F6600850C6C /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DF6C09426262F6600850C6C /* SceneDelegate.swift */; };
 		6DF6C09726262F6600850C6C /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DF6C09626262F6600850C6C /* HomeViewController.swift */; };
@@ -56,14 +56,14 @@
 		6D75519F264E7AA300F91D2A /* Artwork.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Artwork.swift; sourceTree = "<group>"; };
 		6D7551E6264EA07A00F91D2A /* ArtworkTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtworkTableViewController.swift; sourceTree = "<group>"; };
 		6D75522B264ED10D00F91D2A /* ProfilePostTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfilePostTableViewCell.swift; sourceTree = "<group>"; };
-		6DBED5FC264EFD6E00CB6C09 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../GoogleService-Info.plist"; sourceTree = "<group>"; };
 		6DCCC087264827540037DDDE /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		6DCCC09426482B2E0037DDDE /* EditViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditViewController.swift; sourceTree = "<group>"; };
 		6DCCC09726482DE70037DDDE /* AppUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppUser.swift; sourceTree = "<group>"; };
-		6DCCC0A626483A6F0037DDDE /* UIViewController+alert.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "UIViewController+alert.swift"; path = "../../Snacktacular/Snacktacular/Utilities/UIViewController+alert.swift"; sourceTree = "<group>"; };
 		6DD485F72651C1E100CFC5B5 /* AppUsers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppUsers.swift; sourceTree = "<group>"; };
 		6DD486362651E79700CFC5B5 /* UsersListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsersListViewController.swift; sourceTree = "<group>"; };
 		6DD486462651EA2F00CFC5B5 /* UsersTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsersTableViewCell.swift; sourceTree = "<group>"; };
+		6DE120602655314000E3ABED /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		6DE120642655322400E3ABED /* UIViewController+alert.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIViewController+alert.swift"; sourceTree = "<group>"; };
 		6DF6C08F26262F6600850C6C /* Field.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Field.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6DF6C09226262F6600850C6C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		6DF6C09426262F6600850C6C /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -166,11 +166,11 @@
 				6DCCC09A26482F160037DDDE /* Models */,
 				6DCCC09B26482F300037DDDE /* Controllers */,
 				6D755161264D5C5C00F91D2A /* Views */,
-				6DCCC0A626483A6F0037DDDE /* UIViewController+alert.swift */,
 				6DF6C09826262F6600850C6C /* Main.storyboard */,
+				6DE120642655322400E3ABED /* UIViewController+alert.swift */,
 				6DF6C09B26262F6800850C6C /* Assets.xcassets */,
 				6DF6C09D26262F6800850C6C /* LaunchScreen.storyboard */,
-				6DBED5FC264EFD6E00CB6C09 /* GoogleService-Info.plist */,
+				6DE120602655314000E3ABED /* GoogleService-Info.plist */,
 				6DF6C0A026262F6800850C6C /* Info.plist */,
 			);
 			path = Field;
@@ -245,7 +245,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6DF6C09F26262F6800850C6C /* LaunchScreen.storyboard in Resources */,
-				6DBED5FD264EFD6E00CB6C09 /* GoogleService-Info.plist in Resources */,
+				6DE120612655314000E3ABED /* GoogleService-Info.plist in Resources */,
 				6DF6C09C26262F6800850C6C /* Assets.xcassets in Resources */,
 				6DF6C09A26262F6600850C6C /* Main.storyboard in Resources */,
 			);
@@ -321,12 +321,12 @@
 				6D3BCF57264C513B00C727F1 /* Posts.swift in Sources */,
 				6D3BCF5D264C54C800C727F1 /* Comments.swift in Sources */,
 				6D755164264D66C200F91D2A /* DetailViewController.swift in Sources */,
+				6DE120652655322400E3ABED /* UIViewController+alert.swift in Sources */,
 				6DD486472651EA2F00CFC5B5 /* UsersTableViewCell.swift in Sources */,
 				6DD485F82651C1E100CFC5B5 /* AppUsers.swift in Sources */,
 				6DD486372651E79700CFC5B5 /* UsersListViewController.swift in Sources */,
 				6D16CEBE263EFC20003BC8C9 /* LoginViewController.swift in Sources */,
 				6DF6C09726262F6600850C6C /* HomeViewController.swift in Sources */,
-				6DCCC0A726483A6F0037DDDE /* UIViewController+alert.swift in Sources */,
 				6D755167264D72E200F91D2A /* CommentViewController.swift in Sources */,
 				6D7551A0264E7AA300F91D2A /* Artwork.swift in Sources */,
 				6D3BCF7F264C644D00C727F1 /* PostTableViewCell.swift in Sources */,
